@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using StageAPI.Application.DTOs;
 using StageAPI.Application.DTOs.Activity;
 using StageAPI.Application.Features.Commands.Activity.CreateActivity;
@@ -34,12 +35,14 @@ namespace StageAPI.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateActivityDTO createActivityDTO)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             return HandleResult(await _mediator.Send(new CreateActivityCommandRequest { CreateActivity = createActivityDTO }));
         }
 
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] UpdateActivityDTO updateActivityDTO)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             return HandleResult(await _mediator.Send(new UpdateActivityCommandRequest { UpdateActivityDTO = updateActivityDTO }));
         }
 

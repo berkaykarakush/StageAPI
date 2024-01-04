@@ -7,6 +7,7 @@ using Serilog;
 using Serilog.Sinks.PostgreSQL;
 using Serilog.Core;
 using Microsoft.AspNetCore.HttpLogging;
+using StageAPI.Infrastructure.Middlewares;
 var builder = WebApplication.CreateBuilder(args);
 // Configure services
 builder.Services.AddPersistenceServices(builder.Configuration);
@@ -16,7 +17,7 @@ builder.Services.AddDbContext<StageAPIDbContext>();
 
 // Add CORS Policy
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
-    policy.WithOrigins("https://localhost:4200", "http://localhost:4200")
+    policy.WithOrigins()
     .AllowAnyHeader()
     .AllowAnyMethod()
 ));
@@ -72,13 +73,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSerilogRequestLogging();
-// CORS Policy
-app.UseCors();
-// Enforece HTTPS
+// Enforce HTTPS
 app.UseHttpsRedirection();
+// Add authorization
 app.UseAuthorization();
+// Map controllers
 app.MapControllers();
-
+// Enable CORS Policy
+app.UseCors();
+// Add custom IP control middleware
+app.UseMiddleware<IPControlMiddleware>();
 // Seed data during application startup
 using (var scope = app.Services.CreateScope())
 {

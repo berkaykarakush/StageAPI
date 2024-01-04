@@ -9,5 +9,7 @@ namespace StageAPI.Domain
         /// Gets or sets the entity identifier
         /// </summary>
         public Guid Id { get; set; } = Guid.NewGuid();
+        public DateTime CreatedData { get; set; }
+        public DateTime UpdatedDate { get; set; }
     }
 }

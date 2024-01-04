@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StageAPI.Persistence.Contexts;
@@ -11,9 +12,10 @@ using StageAPI.Persistence.Contexts;
 namespace StageAPI.Persistence.Migrations
 {
     [DbContext(typeof(StageAPIDbContext))]
-    partial class StageAPIDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240102092115_AddDates")]
+    partial class AddDates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
