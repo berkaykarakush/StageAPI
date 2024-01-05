@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using RestSharp;
+using StageAPI.Application.DTOs.Weather;
 using StageAPI.Application.Services;
 
 namespace StageAPI.Infrastructure.Services
@@ -55,6 +57,40 @@ namespace StageAPI.Infrastructure.Services
                 // Logs errors in case of exceptions and throws an exception
                 _logger.LogError(ex, $"An error occured in GetWeatherAsync: {ex.Message}");
                 throw new Exception("An error occured in GetWeatherAsync");
+            }
+        }
+
+        public async Task<WeatherInfo> GetWeatherAsync(string city, string datetime)
+        {
+            try
+            {
+                // Call the GetWeatherAsync method to retrieve the weather data
+                string weatherData = await GetWeatherAsync(city);
+
+                // Deserialize the JSON response into a strongly typed object
+                WeatherApiResponse weatherApiResponse = JsonConvert.DeserializeObject<WeatherApiResponse>(weatherData);
+
+                // Find the weather information for the target date
+                WeatherInfo targetWeather = weatherApiResponse?.Result.FirstOrDefault(weather => weather.Date == datetime);
+                targetWeather.City = weatherApiResponse.City;
+                if (targetWeather != null)
+                {
+                    // Log the relevant information and return the weather details
+                    _logger.LogInformation($"Weather for {city} on {datetime}: {targetWeather.Description}, Temperature: {targetWeather.Degree}°C");
+                    return targetWeather;
+                }
+                else
+                {
+                    // Log a message if the weather information for the target date is not found
+                    _logger.LogWarning($"Weather information for {city} on {datetime} not found.");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions and log errors
+                _logger.LogError(ex, $"An error occurred in GetWeatherForDateAsync: {ex.Message}");
+                throw new Exception("An error occurred in GetWeatherForDateAsync");
             }
         }
     }

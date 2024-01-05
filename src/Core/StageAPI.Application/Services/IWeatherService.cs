@@ -1,3 +1,5 @@
+using StageAPI.Application.DTOs.Weather;
+
 namespace StageAPI.Application.Services
 {
     // Service interface for weather-related functionality
@@ -9,5 +11,6 @@ namespace StageAPI.Application.Services
         /// <param name="city">The city for which weather information is to be obtained</param>
         /// <returns>A task representing the asynchronous operation that returns a JSON string containing weather information</returns>
         Task<string> GetWeatherAsync(string city);
+        Task<WeatherInfo> GetWeatherAsync(string city, string datetime);
     }
 }

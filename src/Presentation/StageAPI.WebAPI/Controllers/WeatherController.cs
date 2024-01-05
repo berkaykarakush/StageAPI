@@ -19,5 +19,10 @@ namespace StageAPI.WebAPI.Controllers
         {
             return Ok(await _weatherService.GetWeatherAsync(city));
         }
+        [HttpGet("daily")]
+        public async Task<IActionResult> GetWeatherForDaily([FromQuery] string city, string datetime)
+        {
+            return Ok(await _weatherService.GetWeatherAsync(city, datetime));
+        }
     }
 }

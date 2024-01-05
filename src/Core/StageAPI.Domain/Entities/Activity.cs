@@ -12,7 +12,7 @@ namespace StageAPI.Domain.Entities
         /// <summary>
         /// Gets or state the date and time of instance creation
         /// </summary>
-        public DateTime Date { get; set; } = DateTime.UtcNow;
+        public DateTime Date { get; set; }
         /// <summary>
         /// Gets or sets the description
         /// </summary>

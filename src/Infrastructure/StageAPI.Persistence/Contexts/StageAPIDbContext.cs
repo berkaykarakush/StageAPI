@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using StageAPI.Domain;
 using StageAPI.Domain.Entities;
 using StageAPI.Persistence.Configurations.Activity;
@@ -9,6 +10,7 @@ namespace StageAPI.Persistence.Contexts
     {
         public StageAPIDbContext(DbContextOptions<StageAPIDbContext> options) : base(options)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
         /// <summary>
         /// Gets or sets the DbSet for the Activity entity
@@ -24,14 +26,25 @@ namespace StageAPI.Persistence.Contexts
             var datas = ChangeTracker.Entries<BaseEntity>();
             foreach (var data in datas)
             {
-                _ = data.State switch
+                if (data.State == EntityState.Added)
                 {
-                    EntityState.Added => data.Entity.CreatedData = DateTime.UtcNow,
-                    EntityState.Modified => data.Entity.UpdatedDate = DateTime.UtcNow,
-                    _ => DateTime.UtcNow
-                };
+                    data.Entity.CreatedData = DateTime.UtcNow;
+                }
+                else if (data.State == EntityState.Modified)
+                {
+                    data.Entity.UpdatedDate = DateTime.UtcNow;
+                }
             }
-            return await base.SaveChangesAsync(cancellationToken);
+
+            try
+            {
+                return await base.SaveChangesAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error saving changes to the database", ex);
+            }
         }
+
     }
 }
